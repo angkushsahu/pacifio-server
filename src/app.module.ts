@@ -1,10 +1,14 @@
+import { APP_FILTER } from "@nestjs/core";
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
+
+import { ConfigurationModule } from "./configuration";
+import { AppExceptionFilter } from "./exceptions";
+import { DatabaseModule } from "./database";
+import * as ApiModule from "./apiModules";
+import { SchemaModule } from "./models";
 
 @Module({
-   imports: [],
-   controllers: [AppController],
-   providers: [AppService],
+   imports: [ConfigurationModule, DatabaseModule, SchemaModule, ApiModule.AuthModule, ApiModule.RouteNotFoundModule],
+   providers: [{ provide: APP_FILTER, useClass: AppExceptionFilter }],
 })
 export class AppModule {}
