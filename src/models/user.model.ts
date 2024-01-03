@@ -1,6 +1,5 @@
 import { Document, type Model, type InferSchemaType } from "mongoose";
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { createHash, randomBytes } from "crypto";
 import { compare, genSalt, hash } from "bcrypt";
 
 @Schema({ timestamps: true, collection: "users" })
@@ -21,7 +20,6 @@ export class User {
    resetPassword: string;
 
    comparePassword: (enteredPassword: string) => Promise<boolean>;
-   generateResetPasswordToken: () => string;
    getUser: (this: IUserDocument) => IUser;
 }
 
@@ -43,12 +41,6 @@ UserSchema.pre("save", async function (next) {
 // compare hashed password
 UserSchema.methods.comparePassword = async function (this: IUserDocument, enteredPassword: string) {
    return await compare(enteredPassword, this.password);
-};
-
-UserSchema.methods.getResetPasswordToken = function (this: IUserDocument) {
-   const resetToken = randomBytes(16).toString("hex");
-   this.resetPassword = createHash("sha256").update(resetToken).digest("hex");
-   return resetToken;
 };
 
 UserSchema.methods.getUser = function (this: IUserDocument): IUser {

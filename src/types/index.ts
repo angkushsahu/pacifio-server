@@ -1,5 +1,6 @@
 import { Request } from "express";
-// import { UserDocument } from "src/schema/user.schema";
+
+import type { IUserDocument } from "src/models/user.model";
 
 export interface IDecodedToken {
    id: string;
@@ -7,4 +8,12 @@ export interface IDecodedToken {
    exp: number;
 }
 
-// export type CustomRequest = Request & { user: UserDocument };
+export type CustomRequest = Request & { user: IUserDocument };
+
+export interface UserServiceArgs {
+   user: IUserDocument;
+}
+
+export interface IStatusCode {
+   statusCode: number;
+}

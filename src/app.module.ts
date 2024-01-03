@@ -8,7 +8,14 @@ import * as ApiModule from "./apiModules";
 import { SchemaModule } from "./models";
 
 @Module({
-   imports: [ConfigurationModule, DatabaseModule, SchemaModule, ApiModule.AuthModule, ApiModule.RouteNotFoundModule],
+   imports: [
+      ConfigurationModule,
+      DatabaseModule,
+      SchemaModule,
+      ApiModule.AuthModule,
+      ApiModule.UserModule,
+      ApiModule.RouteNotFoundModule,
+   ],
    providers: [{ provide: APP_FILTER, useClass: AppExceptionFilter }],
 })
-export class AppModule {}
+export default class AppModule {}
