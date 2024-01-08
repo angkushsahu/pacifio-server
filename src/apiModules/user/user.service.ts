@@ -16,7 +16,7 @@ export default class UserService {
          await user.save();
          return { success: true, message: "Password updated successfully", statusCode };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 
@@ -30,7 +30,7 @@ export default class UserService {
          if (!updatedUser) throw new ErrorHandler({ message: "User not found", statusCode: 404 });
          return { success: true, message: "User updated successfully", statusCode, data: { user: updatedUser.getUser() } };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 
@@ -39,7 +39,7 @@ export default class UserService {
          await user.deleteOne();
          return { success: true, message: "User deleted successfully", statusCode };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 }

@@ -17,7 +17,10 @@ export default class AuthService {
    ) {}
 
    async getJwtToken({ id }: { id: string }) {
-      return await this.jwtService.signAsync({ id }, { secret: process.env.JWT_SECRET, expiresIn: "2 days" });
+      return await this.jwtService.signAsync(
+         { id },
+         { secret: process.env.JWT_SECRET, expiresIn: Number(process.env.COOKIE_AGE) }
+      );
    }
 
    async signup({ body, statusCode }: { body: SignupDTO } & IStatusCode) {
@@ -27,9 +30,10 @@ export default class AuthService {
          if (userExists) throw new ErrorHandler({ message: "E-mail already exists, login instead", statusCode: 409 });
 
          const user = await this.userModel.create({ name, email, password });
-         return { success: true, message: "User registered successfully", statusCode, data: { user: user.getUser() } };
+         const token = await this.getJwtToken({ id: user.id });
+         return { success: true, message: "User registered successfully", statusCode, data: { user: user.getUser(), token } };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 
@@ -46,7 +50,7 @@ export default class AuthService {
 
          return { success: true, message: "Login successful", statusCode, data: { user: user.getUser(), token } };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 
@@ -64,7 +68,7 @@ export default class AuthService {
          await user.save();
          return { success: true, message: mailResponse.message, statusCode };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 
@@ -80,7 +84,7 @@ export default class AuthService {
          await user.save();
          return { success: true, message: "Password updated successfully, login with new credentials", statusCode };
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 
@@ -91,7 +95,7 @@ export default class AuthService {
          if (!user) throw new ErrorHandler({ message: "User not found", statusCode: 404 });
          return user;
       } catch (error: any) {
-         throw new ErrorHandler({ message: error.message as string, statusCode: 500 });
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
 }
