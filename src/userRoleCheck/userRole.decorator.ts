@@ -1,9 +1,10 @@
 import { SetMetadata } from "@nestjs/common";
 
-export const ROLES_KEY = "roles";
-export type AllowedRolesType = "admin" | "super-admin" | "user";
+import type { UserRoles } from "src/types";
 
-export function Roles(...roles: Array<AllowedRolesType>) {
+export const ROLES_KEY = "roles";
+
+export function Roles(...roles: Array<UserRoles>) {
    const uniqueRoles = [...new Set(roles)];
    return SetMetadata(ROLES_KEY, uniqueRoles);
 }

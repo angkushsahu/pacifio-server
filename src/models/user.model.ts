@@ -2,6 +2,8 @@ import { Document, type Model, type InferSchemaType } from "mongoose";
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { compare, genSalt, hash } from "bcrypt";
 
+import type { UserRoles } from "src/types";
+
 @Schema({ timestamps: true, collection: "users" })
 export class User {
    @Prop({ type: String, required: [true, "Please enter your name"] })
@@ -13,8 +15,8 @@ export class User {
    @Prop({ type: String, required: [true, "Please enter a password"] })
    password: string;
 
-   @Prop({ type: String, enum: ["user", "admin"], default: "user" })
-   role: "user" | "admin";
+   @Prop({ type: String, enum: ["user", "admin", "super-admin"], default: "user" })
+   role: UserRoles;
 
    @Prop({ type: String, default: "" })
    resetPassword: string;

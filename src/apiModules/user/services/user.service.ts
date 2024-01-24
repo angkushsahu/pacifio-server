@@ -1,9 +1,9 @@
 import { InjectModel } from "@nestjs/mongoose";
 import { Injectable } from "@nestjs/common";
 
+import { ChangePasswordDTO, UpdateUserDTO } from "../user.dto";
 import type { IStatusCode, UserServiceArgs } from "src/types";
-import { ChangePasswordDTO, UpdateUserDTO } from "./user.dto";
-import { IUserModel, USER_MODEL } from "src/models";
+import { type IUserModel, USER_MODEL } from "src/models";
 import { ErrorHandler } from "src/exceptions";
 
 @Injectable()

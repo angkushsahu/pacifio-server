@@ -1,6 +1,6 @@
-import { Request } from "express";
+import type { Request } from "express";
 
-import type { IUserDocument } from "src/models/user.model";
+import type { IUserDocument } from "src/models";
 
 export interface IDecodedToken {
    id: string;
@@ -9,6 +9,8 @@ export interface IDecodedToken {
 }
 
 export type CustomRequest = Request & { user: IUserDocument };
+
+export type UserRoles = "user" | "admin" | "super-admin";
 
 export interface UserServiceArgs {
    user: IUserDocument;

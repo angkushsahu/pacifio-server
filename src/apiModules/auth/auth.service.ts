@@ -5,9 +5,9 @@ import { JwtService } from "@nestjs/jwt";
 
 import { ForgotPasswordDTO, LoginDTO, ResetPasswordDTO, SignupDTO } from "./auth.dto";
 import { type IUserModel, USER_MODEL } from "src/models";
+import { sendResetMail } from "src/mailService";
 import { ErrorHandler } from "src/exceptions";
 import type { IStatusCode } from "src/types";
-import { sendResetMail } from "src/utils";
 
 @Injectable()
 export default class AuthService {

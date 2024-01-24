@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, Put, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
-import { ChangePasswordDTO, UpdateUserDTO } from "./user.dto";
+import { ChangePasswordDTO, UpdateUserDTO } from "../user.dto";
+import UserService from "../services/user.service";
 import type { CustomRequest } from "src/types";
-import UserService from "./user.service";
 
 @Controller("user")
 export default class UserController {

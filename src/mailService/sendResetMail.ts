@@ -1,15 +1,12 @@
-import { createTransport } from "nodemailer";
+import mailTransporter from "./mailTransporter";
 
-export default async function sendResetMail({ email, resetToken }: { email: string; resetToken: string }) {
+export interface SendResetMailArgs {
+   email: string;
+   resetToken: string;
+}
+
+export default async function sendResetMail({ email, resetToken }: SendResetMailArgs) {
    try {
-      const transporter = createTransport({
-         service: process.env.MAIL_SERVICE,
-         auth: {
-            user: process.env.MAIL,
-            pass: process.env.MAIL_PASS,
-         },
-      });
-
       const text: string = `
         WE GOT YOUR REQUEST TO RESET YOUR PASSWORD
 
@@ -28,7 +25,7 @@ export default async function sendResetMail({ email, resetToken }: { email: stri
          text,
       };
 
-      await transporter.sendMail(mailOptions);
+      await mailTransporter(mailOptions);
       return { success: true, message: "Check your mail inbox, you will receive a link from where you can reset your password" };
    } catch (error: any) {
       return { success: false, message: error.message as string };
