@@ -21,6 +21,14 @@ export default class UserAdminController {
    @HttpCode(200)
    @Roles("admin", "super-admin")
    @UseGuards(AuthGuard("jwt"), UserRoleGuard)
+   @Get("info")
+   userInfo() {
+      return this.userAdminService.userInfo({ statusCode: 200 });
+   }
+
+   @HttpCode(200)
+   @Roles("admin", "super-admin")
+   @UseGuards(AuthGuard("jwt"), UserRoleGuard)
    @Get(":id")
    getUser(@Param() params: IdParam) {
       return this.userAdminService.getUser({ params, statusCode: 200 });

@@ -125,6 +125,41 @@ export default class ProductAdminService {
       }
    }
 
+   async productInfo({ statusCode }: IStatusCode) {
+      try {
+         const products = await this.productModel.aggregate([
+            {
+               $group: {
+                  _id: {
+                     $cond: {
+                        if: { $eq: ["$stock", 0] },
+                        then: "outOfStock",
+                        else: "inStock",
+                     },
+                  },
+                  count: { $sum: 1 },
+               },
+            },
+         ]);
+
+         const productGroup = { inStock: 0, outOfStock: 0 };
+         let totalProducts = 0;
+         products.map((product) => {
+            productGroup[product._id] = product.count;
+            totalProducts += product.count;
+         });
+
+         return {
+            success: true,
+            message: "Found product info successfully",
+            statusCode,
+            data: { totalProducts, productGroup },
+         };
+      } catch (error: any) {
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
+      }
+   }
+
    async getAllProductsForAdmin({
       resultsPerPage,
       statusCode,

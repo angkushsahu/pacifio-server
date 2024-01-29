@@ -65,4 +65,12 @@ export default class ProductAdminController {
    getAllProductsForAdmin(@Query() queryParams: ProductAdminSearchDTO) {
       return this.productAdminService.getAllProductsForAdmin({ statusCode: 200, queryParams, resultsPerPage: 8 });
    }
+
+   @HttpCode(200)
+   @Roles("admin", "super-admin")
+   @UseGuards(AuthGuard("jwt"), UserRoleGuard)
+   @Get("info")
+   productInfo() {
+      return this.productAdminService.productInfo({ statusCode: 200 });
+   }
 }

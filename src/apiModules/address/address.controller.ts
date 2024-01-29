@@ -10,6 +10,7 @@ import { IdParam } from "../common.dto";
 export default class AddressController {
    constructor(private readonly addressService: AddressService) {}
 
+   @HttpCode(201)
    @UseGuards(AuthGuard("jwt"))
    @Post("create")
    createAddress(@Req() request: CustomRequest, @Body() addressBody: AddressDTO) {

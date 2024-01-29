@@ -1,14 +1,19 @@
 import { InjectModel } from "@nestjs/mongoose";
 import { Injectable } from "@nestjs/common";
 
+import type { IUserModel, IAddressModel, IShoppingBagModel } from "src/models";
+import { USER_MODEL, SHOPPING_BAG_MODEL, ADDRESS_MODEL } from "src/models";
 import { ChangePasswordDTO, UpdateUserDTO } from "../user.dto";
 import type { IStatusCode, UserServiceArgs } from "src/types";
-import { type IUserModel, USER_MODEL } from "src/models";
 import { ErrorHandler } from "src/exceptions";
 
 @Injectable()
 export default class UserService {
-   constructor(@InjectModel(USER_MODEL) private readonly userModel: IUserModel) {}
+   constructor(
+      @InjectModel(USER_MODEL) private readonly userModel: IUserModel,
+      @InjectModel(ADDRESS_MODEL) private readonly addressModel: IAddressModel,
+      @InjectModel(SHOPPING_BAG_MODEL) private readonly shoppingBagModel: IShoppingBagModel
+   ) {}
 
    async changePassword({ body, statusCode, user }: UserServiceArgs & IStatusCode & { body: ChangePasswordDTO }) {
       try {
@@ -36,7 +41,10 @@ export default class UserService {
 
    async deleteUser({ statusCode, user }: UserServiceArgs & IStatusCode) {
       try {
+         await this.addressModel.deleteMany({ user: user._id });
+         await this.shoppingBagModel.deleteMany({ user: user._id });
          await user.deleteOne();
+
          return { success: true, message: "User deleted successfully", statusCode };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });

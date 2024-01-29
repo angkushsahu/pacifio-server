@@ -8,5 +8,7 @@ declare namespace NodeJS {
       MAIL: string;
       MAIL_PASS: string;
       COOKIE_AGE: string;
+      STRIPE_API_KEY: string;
+      STRIPE_SECRET_KEY: string;
    }
 }

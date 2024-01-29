@@ -2,15 +2,20 @@ import { InjectModel } from "@nestjs/mongoose";
 import type { PipelineStage } from "mongoose";
 import { Injectable } from "@nestjs/common";
 
+import type { IUserModel, IAddressModel, IShoppingBagModel } from "src/models";
+import { USER_MODEL, SHOPPING_BAG_MODEL, ADDRESS_MODEL } from "src/models";
 import type { IStatusCode, UserRoles } from "src/types";
-import { IUserModel, USER_MODEL } from "src/models";
 import { IdParam } from "src/apiModules/common.dto";
 import { ErrorHandler } from "src/exceptions";
 import { GetAllUsersDTO } from "../user.dto";
 
 @Injectable()
 export default class UserAdminService {
-   constructor(@InjectModel(USER_MODEL) private readonly userModel: IUserModel) {}
+   constructor(
+      @InjectModel(USER_MODEL) private readonly userModel: IUserModel,
+      @InjectModel(ADDRESS_MODEL) private readonly addressModel: IAddressModel,
+      @InjectModel(SHOPPING_BAG_MODEL) private readonly shoppingBagModel: IShoppingBagModel
+   ) {}
 
    async getAllUsers({
       queryParams,
@@ -59,6 +64,28 @@ export default class UserAdminService {
       }
    }
 
+   async userInfo({ statusCode }: IStatusCode) {
+      try {
+         const users = await this.userModel.aggregate([{ $group: { _id: "$role", count: { $sum: 1 } } }]);
+
+         const userGroup = { user: 0, admin: 0, "super-admin": 0 };
+         let totalUsers = 0;
+         users.map((user) => {
+            userGroup[user._id] = user.count;
+            totalUsers += user.count;
+         });
+
+         return {
+            success: true,
+            message: "Found user info successfully",
+            statusCode,
+            data: { totalUsers, userGroup },
+         };
+      } catch (error: any) {
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
+      }
+   }
+
    async getUser({ params, statusCode }: { params: IdParam } & IStatusCode) {
       try {
          const user = await this.userModel.findById(params.id);
@@ -86,8 +113,13 @@ export default class UserAdminService {
 
    async deleteUser({ params, statusCode }: { params: IdParam } & IStatusCode) {
       try {
-         const user = await this.userModel.findByIdAndDelete(params.id);
+         const user = await this.userModel.findById(params.id);
          if (!user) throw new ErrorHandler({ message: "User not found", statusCode: 404 });
+
+         await this.addressModel.deleteMany({ user: user._id });
+         await this.shoppingBagModel.deleteMany({ user: user._id });
+         await user.deleteOne();
+
          return { success: true, message: "User deleted successfully", statusCode };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });

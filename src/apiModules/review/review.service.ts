@@ -73,10 +73,10 @@ export default class ReviewService {
       queryParams,
       productId,
    }: IStatusCode & { productId: string; queryParams: GetAllReviewsDTO; resultsPerPage: number }) {
-      const product = await this.productModel.findById(productId);
-      if (!product) throw new ErrorHandler({ message: "Product not found", statusCode: 404 });
-
       try {
+         const product = await this.productModel.findById(productId);
+         if (!product) throw new ErrorHandler({ message: "Product not found", statusCode: 404 });
+
          let { page } = queryParams;
          if (!page) page = 1;
 
