@@ -107,7 +107,7 @@ export default class ProductService {
             success: true,
             message: "Highest-rated products found successfully",
             statusCode,
-            data: { totalProducts, numberOfFetchedProducts: totalProducts, products },
+            data: { totalProducts, totalPages: 1, numberOfFetchedProducts: totalProducts, products },
          };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
