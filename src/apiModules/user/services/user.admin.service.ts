@@ -52,12 +52,13 @@ export default class UserAdminService {
          if (!users) throw new ErrorHandler({ message: "Unable to find users", statusCode: 500 });
 
          const totalUsers = count[0]?.totalUsers || 0;
+         const totalPages = Math.ceil(totalUsers / resultsPerPage);
 
          return {
             success: true,
             message: "Users found successfully",
             statusCode,
-            data: { totalUsers, numberOfFetchedUsers: users.length, users },
+            data: { totalUsers, totalPages, numberOfFetchedUsers: users.length, users },
          };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });

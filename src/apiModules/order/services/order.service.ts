@@ -143,12 +143,13 @@ export default class OrderService {
          if (!orders) throw new ErrorHandler({ message: "Unable to find orders", statusCode: 500 });
 
          const totalOrders = await this.orderModel.countDocuments();
+         const totalPages = Math.ceil(totalOrders / resultsPerPage);
 
          return {
             success: true,
             message: "Orders found successfully",
             statusCode,
-            data: { totalOrders, numberOfFetchedOrders: orders.length, orders },
+            data: { totalOrders, totalPages, numberOfFetchedOrders: orders.length, orders },
          };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });

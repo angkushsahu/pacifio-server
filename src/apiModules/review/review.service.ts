@@ -91,12 +91,13 @@ export default class ReviewService {
          if (!reviews) throw new ErrorHandler({ message: "Unable to find reviews", statusCode: 500 });
 
          const totalReviews = await this.reviewModel.countDocuments();
+         const totalPages = Math.ceil(totalReviews / resultsPerPage);
 
          return {
             success: true,
             message: "Reviews found successfully",
             statusCode,
-            data: { totalReviews, numberOfFetchedReviews: reviews.length, reviews },
+            data: { totalReviews, totalPages, numberOfFetchedReviews: reviews.length, reviews },
          };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });

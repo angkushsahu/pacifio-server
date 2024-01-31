@@ -31,11 +31,13 @@ export default class ProductService {
          const pipeline: Array<PipelineStage> = [];
 
          if (query) {
-            query = `.*${[...query].join(".*")}.*`;
             const regexQueryPattern = new RegExp(query, "i");
             // if the user does not filter through category, then both product name and categories are being searched
-            if (!category) pipeline.push({ $match: { $or: [{ name: regexQueryPattern }, { category: regexQueryPattern }] } });
-            else pipeline.push({ $match: { name: regexQueryPattern } });
+            if (!category) {
+               const categoryQuery = `.*${[...query].join(".*")}.*`;
+               const categoryRegexPattern = new RegExp(categoryQuery, "i");
+               pipeline.push({ $match: { $or: [{ name: regexQueryPattern }, { category: categoryRegexPattern }] } });
+            } else pipeline.push({ $match: { name: regexQueryPattern } });
          }
 
          if (!page) page = 1;
@@ -76,12 +78,13 @@ export default class ProductService {
          if (!products) throw new ErrorHandler({ message: "Unable to find products", statusCode: 500 });
 
          const totalProducts = count[0]?.totalProducts || 0;
+         const totalPages = Math.ceil(totalProducts / resultsPerPage);
 
          return {
             success: true,
             message: "Products found successfully",
             statusCode,
-            data: { totalProducts, numberOfFetchedProducts: products.length, products },
+            data: { totalProducts, totalPages, numberOfFetchedProducts: products.length, products },
          };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });

@@ -173,7 +173,6 @@ export default class ProductAdminService {
          else if (stock && stock === "false") pipeline.push({ $match: { stock: { $lte: 0 } } });
 
          if (query) {
-            query = `.*${[...query].join(".*")}.*`;
             const regexQueryPattern = new RegExp(query, "i");
             pipeline.push({ $match: { name: regexQueryPattern } });
          }
@@ -195,12 +194,13 @@ export default class ProductAdminService {
          if (!products) throw new ErrorHandler({ message: "Unable to find products", statusCode: 500 });
 
          const totalProducts = count[0]?.totalProducts || 0;
+         const totalPages = Math.ceil(totalProducts / resultsPerPage);
 
          return {
             success: true,
             message: "Products found successfully",
             statusCode,
-            data: { totalProducts, numberOfFetchedProducts: products.length, products },
+            data: { totalProducts, totalPages, numberOfFetchedProducts: products.length, products },
          };
       } catch (error: any) {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
