@@ -50,4 +50,15 @@ export default class UserService {
          throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
       }
    }
+
+   async randomDbQuery({ statusCode }: IStatusCode) {
+      try {
+         await this.userModel.find();
+         const totalUsers = await this.userModel.countDocuments();
+
+         return { success: true, message: "Database is healthy", statusCode, data: totalUsers };
+      } catch (error: any) {
+         throw new ErrorHandler({ message: error.message as string, statusCode: error.statusCode || 500 });
+      }
+   }
 }

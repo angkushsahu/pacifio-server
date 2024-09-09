@@ -36,4 +36,10 @@ export default class UserController {
    deleteUser(@Req() request: CustomRequest) {
       return this.userService.deleteUser({ user: request.user, statusCode: 200 });
    }
+
+   @HttpCode(200)
+   @Get("db-health-check")
+   randomDbQuery() {
+      return this.userService.randomDbQuery({ statusCode: 200 });
+   }
 }
