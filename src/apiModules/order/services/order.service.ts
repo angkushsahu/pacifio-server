@@ -97,6 +97,7 @@ export default class OrderService {
          const payment = await this.stripe.paymentIntents.create({
             amount: totalPrice * 100, // converting rupee to paise
             currency: "INR",
+            description: "PAYMENT FOR PACIFIO",
             metadata: { company: "Pacifio" },
             payment_method: "pm_card_visa",
             confirm: true,
