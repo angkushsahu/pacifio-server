@@ -97,12 +97,22 @@ export default class OrderService {
          const payment = await this.stripe.paymentIntents.create({
             amount: totalPrice * 100, // converting rupee to paise
             currency: "INR",
-            description: "PAYMENT FOR PACIFIO",
             metadata: { company: "Pacifio" },
             payment_method: "pm_card_visa",
             confirm: true,
             automatic_payment_methods: { enabled: true, allow_redirects: "never" },
             off_session: true,
+            description: "PAYMENT FOR PACIFIO",
+            shipping: {
+               address: {
+                  city: order.address.city,
+                  country: order.address.country,
+                  line1: order.address.location,
+                  postal_code: order.address.pincode,
+                  state: order.address.state,
+               },
+               name: user.name,
+            },
          });
          if (!payment) throw new ErrorHandler({ message: "Unable to process payment, please try again", statusCode: 500 });
 
